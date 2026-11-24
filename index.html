@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-Дизайнер | Карточки для WB и Ozon</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#050505;
+    --card:#0d0d0d;
+    --line:#1c1c1c;
+    --neon:#a3ff12;
+    --neon2:#00e0ff;
+    --purple:#8b5cf6;
+    --text:#eaeaea;
+    --muted:#8a8a8a;
+  }
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,sans-serif;
+    overflow-x:hidden;
+    line-height:1.5;
+  }
+
+  /* ===== КАПЕЛЬКИ СВЕРХУ ===== */
+  .drips{
+    position:fixed;top:0;left:0;right:0;height:0;z-index:999;
+    pointer-events:none;
+    display:flex;justify-content:space-around;
+    filter:drop-shadow(0 0 6px var(--neon));
+  }
+  .drips span{
+    width:4px;height:0;
+    background:linear-gradient(180deg,var(--neon),var(--neon2));
+    border-radius:0 0 50% 50%;
+    position:relative;
+    animation:drip 5s infinite ease-in;
+  }
+  .drips span::after{
+    content:'';position:absolute;bottom:-5px;left:50%;
+    transform:translateX(-50%);
+    width:8px;height:8px;border-radius:50%;
+    background:var(--neon);
+  }
+  @keyframes drip{
+    0%{height:0;opacity:0}
+    10%{opacity:1}
+    60%{height:70px;opacity:1}
+    100%{height:110px;opacity:0}
+  }
+  .drips span:nth-child(1){animation-delay:0s}
+  .drips span:nth-child(2){animation-delay:.6s}
+  .drips span:nth-child(3){animation-delay:1.4s}
+  .drips span:nth-child(4){animation-delay:.3s}
+  .drips span:nth-child(5){animation-delay:2.1s}
+  .drips span:nth-child(6){animation-delay:1s}
+  .drips span:nth-child(7){animation-delay:2.8s}
+  .drips span:nth-child(8){animation-delay:.9s}
+  .drips span:nth-child(9){animation-delay:1.9s}
+  .drips span:nth-child(10){animation-delay:.2s}
+  .drips span:nth-child(11){animation-delay:2.4s}
+  .drips span:nth-child(12){animation-delay:1.2s}
+
+  /* ===== НАВИГАЦИЯ ===== */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:500;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:18px 5%;
+    background:rgba(5,5,5,.75);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  .logo{
+    font-weight:900;font-size:1.1rem;letter-spacing:1px;
+    background:linear-gradient(90deg,var(--neon),var(--neon2));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  nav ul{display:flex;gap:26px;list-style:none}
+  nav a{color:var(--muted);text-decoration:none;font-size:.9rem;transition:.3s}
+  nav a:hover{color:var(--neon)}
+  .burger{display:none;font-size:1.6rem;cursor:pointer;color:var(--neon)}
+
+  /* ===== HERO ===== */
+  header{
+    min-height:100vh;
+    display:flex;flex-direction:column;justify-content:center;
+    padding:120px 5% 80px;
+    position:relative;
+    overflow:hidden;
+  }
+  header::before{
+    content:'';position:absolute;top:20%;right:-10%;
+    width:500px;height:500px;border-radius:50%;
+    background:radial-gradient(circle,var(--purple),transparent 70%);
+    filter:blur(80px);opacity:.35;
+  }
+  header::after{
+    content:'';position:absolute;bottom:0;left:-10%;
+    width:400px;height:400px;border-radius:50%;
+    background:radial-gradient(circle,var(--neon),transparent 70%);
+    filter:blur(90px);opacity:.2;
+  }
+  .badge{
+    display:inline-block;width:fit-content;
+    padding:6px 14px;border:1px solid var(--neon);
+    border-radius:30px;font-size:.75rem;color:var(--neon);
+    letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;
+  }
+  h1{
+    font-size:clamp(2.4rem,7vw,5rem);
+    line-height:1;font-weight:900;letter-spacing:-2px;
+    position:relative;z-index:2;
+  }
+  h1 span{
+    background:linear-gradient(90deg,var(--neon),var(--neon2),var(--purple));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero-sub{
+    max-width:600px;margin-top:24px;color:var(--muted);
+    font-size:clamp(1rem,2vw,1.2rem);position:relative;z-index:2;
+  }
+  .cta{
+    display:flex;gap:16px;margin-top:40px;flex-wrap:wrap;
+    position:relative;z-index:2;
+  }
+  .btn{
+    padding:14px 32px;border-radius:12px;font-weight:700;
+    text-decoration:none;font-size:.95rem;transition:.3s;
+    border:none;cursor:pointer;display:inline-block;
+  }
+  .btn-primary{
+    background:var(--neon);color:#000;
+    box-shadow:0 0 25px rgba(163,255,18,.4);
+  }
+  .btn-primary:hover{transform:translateY(-3px);box-shadow:0 0 40px rgba(163,255,18,.7)}
+  .btn-ghost{
+    background:transparent;color:var(--text);
+    border:1px solid var(--line);
+  }
+  .btn-ghost:hover{border-color:var(--neon);color:var(--neon)}
+
+  /* ===== СЕКЦИИ ===== */
+  section{padding:100px 5%;position:relative}
+  .sec-title{
+    font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;
+    margin-bottom:12px;letter-spacing:-1px;
+  }
+  .sec-sub{color:var(--muted);margin-bottom:50px;max-width:600px}
+
+  /* ===== УСЛУГИ ===== */
+  .grid{display:grid;gap:20px;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:20px;padding:32px 28px;
+    transition:.4s;position:relative;overflow:hidden;
+  }
+  .card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,var(--neon),var(--neon2));
+    transform:scaleX(0);transform-origin:left;transition:.4s;
+  }
+  .card:hover{transform:translateY(-6px);border-color:#2a2a2a}
+  .card:hover::before{transform:scaleX(1)}
+  .card .icon{font-size:2rem;margin-bottom:18px}
+  .card h3{font-size:1.2rem;margin-bottom:10px}
+  .card p{color:var(--muted);font-size:.92rem}
+  .price{
+    margin-top:18px;font-weight:900;color:var(--neon);
+    font-size:1.05rem;
+  }
+
+  /* ===== ПОРТФОЛИО ===== */
+  .work-grid{display:grid;gap:16px;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  .work{
+    aspect-ratio:3/4;border-radius:16px;
+    background:linear-gradient(160deg,#111,#1a1a1a);
+    border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    flex-direction:column;gap:10px;color:var(--muted);
+    transition:.4s;cursor:pointer;position:relative;overflow:hidden;
+  }
+  .work:hover{border-color:var(--neon);color:var(--neon);transform:scale(1.03)}
+  .work span{font-size:2rem}
+
+  /* ===== РЕЗЮМЕ ===== */
+  .resume{
+    background:var(--card);border:1px solid var(--line);
+    border-radius:24px;padding:48px 40px;max-width:900px;
+  }
+  .resume-head{display:flex;gap:24px;align-items:center;flex-wrap:wrap;margin-bottom:32px}
+  .avatar{
+    width:90px;height:90px;border-radius:50%;
+    background:linear-gradient(135deg,var(--neon),var(--neon2),var(--purple));
+    display:flex;align-items:center;justify-content:center;
+    font-size:2rem;font-weight:900;color:#000;flex-shrink:0;
+  }
+  .resume-head h3{font-size:1.5rem}
+  .resume-head p{color:var(--neon);font-size:.95rem}
+  .resume-block{margin-bottom:28px}
+  .resume-block h4{
+    font-size:.8rem;letter-spacing:2px;text-transform:uppercase;
+    color:var(--neon);margin-bottom:14px;
+  }
+  .resume-block p,.resume-block li{color:var(--muted);font-size:.95rem}
+  .resume-block ul{list-style:none}
+  .resume-block li{
+    padding:10px 0;border-bottom:1px solid var(--line);
+    display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  }
+  .resume-block li:last-child{border:none}
+  .resume-block li b{color:var(--text)}
+  .skills{display:flex;flex-wrap:wrap;gap:10px}
+  .skill{
+    padding:8px 16px;border-radius:30px;
+    background:#151515;border:1px solid var(--line);
+    font-size:.85rem;color:var(--text);transition:.3s;
+  }
+  .skill:hover{border-color:var(--neon);color:var(--neon)}
+
+  /* ===== РЕКЛАМНЫЙ ЦЕНТР / КОНТАКТ ===== */
+  .contact{
+    display:grid;gap:40px;
+    grid-template-columns:1fr 1fr;align-items:start;
+  }
+  form{display:flex;flex-direction:column;gap:16px}
+  input,textarea{
+    background:#0d0d0d;border:1px solid var(--line);
+    border-radius:12px;padding:16px;color:var(--text);
+    font-family:inherit;font-size:.95rem;transition:.3s;width:100%;
+  }
+  input:focus,textarea:focus{
+    outline:none;border-color:var(--neon);
+    box-shadow:0 0 0 3px rgba(163,255,18,.1);
+  }
+  textarea{resize:vertical;min-height:120px}
+  .contact-info p{color:var(--muted);margin-bottom:16px}
+  .contact-info a{
+    color:var(--neon);text-decoration:none;
+    display:block;margin-bottom:12px;font-size:1.1rem;
+  }
+  .contact-info a:hover{text-decoration:underline}
+
+  /* ===== FOOTER ===== */
+  footer{
+    padding:40px 5%;text-align:center;
+    color:var(--muted);font-size:.85rem;
+    border-top:1px solid var(--line);
+  }
+  footer .dot{color:var(--neon)}
+
+  /* ===== АДАПТИВ ===== */
+  @media(max-width:768px){
+    nav ul{
+      position:fixed;top:60px;right:0;
+      flex-direction:column;background:#0a0a0a;
+      padding:24px;gap:20px;
+      border-left:1px solid var(--line);
+      border-bottom:1px solid var(--line);
+      transform:translateX(110%);transition:.3s;
+      border-radius:0 0 0 16px;
+    }
+    nav ul.open{transform:translateX(0)}
+    .burger{display:block}
+    .contact{grid-template-columns:1fr}
+    .resume{padding:32px 22px}
+    .drips span:nth-child(n+7){display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- КАПЕЛЬКИ -->
+<div class="drips">
+  <span></span><span></span><span></span><span></span>
+  <span></span><span></span><span></span><span></span>
+  <span></span><span></span><span></span><span></span>
+</div>
+
+<!-- НАВИГАЦИЯ -->
+<nav>
+  <div class="logo">AI.DESIGN</div>
+  <div class="burger" onclick="document.getElementById('menu').classList.toggle('open')">☰</div>
+  <ul id="menu">
+    <li><a href="#services">Услуги</a></li>
+    <li><a href="#work">Работы</a></li>
+    <li><a href="#resume">Резюме</a></li>
+    <li><a href="#contact">Связаться</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<header>
+  <div class="badge">AI-DESIGNER · 2025</div>
+  <h1>Делаю карточки,<br>которые <span>продают</span></h1>
+  <p class="hero-sub">
+    Привет! Я AI-дизайнер. Создаю сочные и продающие карточки товаров
+    для Wildberries и Ozon — быстро, стильно и по трендам.
+  </p>
+  <div class="cta">
+    <a href="#contact" class="btn btn-primary">Заказать карточку</a>
+    <a href="#resume" class="btn btn-ghost">Смотреть резюме</a>
+  </div>
+</header>
+
+<!-- УСЛУГИ -->
+<section id="services">
+  <h2 class="sec-title">Что я <span style="color:var(--neon)">делаю</span></h2>
+  <p class="sec-sub">Дизайн карточек под маркетплейсы + AI-инструменты для скорости и качества</p>
+  <div class="grid">
+    <div class="card">
+      <div class="icon">🛒</div>
+      <h3>Карточки для WB</h3>
+      <p>Инфографика, баннеры, стикеры, акцентные блоки — всё по правилам Wildberries.</p>
+      <div class="price">от 500 ₽ / карточка</div>
+    </div>
+    <div class="card">
+      <div class="icon">📦</div>
+      <h3>Карточки для Ozon</h3>
+      <p>Продающая инфографика с акцентом на боли клиента и УТП товара.</p>
+      <div class="price">от 500 ₽ / карточка</div>
+    </div>
+    <div class="card">
+      <div class="icon">🤖</div>
+      <h3>AI-генерация</h3>
+      <p>Фото товара в нужном стиле, фоны, модели, окружение — без фотостудии.</p>
+      <div class="price">от 300 ₽ / изображение</div>
+    </div>
+    <div class="card">
+      <div class="icon">🚀</div>
+      <h3>Пакет «Под ключ»</h3>
+      <p>Полный сет: анализ конкурентов, ТЗ, дизайн, сборка под загрузку на маркетплейс.</p>
+      <div class="price">от 4000 ₽ / сет</div>
+    </div>
+  </div>
+</section>
+
+<!-- РАБОТЫ -->
+<section id="work">
+  <h2 class="sec-title">Мои <span style="color:var(--neon)">работы</span></h2>
+  <p class="sec-sub">Замени эти блоки на свои изображения или ссылки</p>
+  <div class="work-grid">
+    <div class="work"><span>📸</span>Кейс 1</div>
+    <div class="work"><span>📸</span>Кейс 2</div>
+    <div class="work"><span>📸</span>Кейс 3</div>
+    <div class="work"><span>📸</span>Кейс 4</div>
+  </div>
+</section>
+
+<!-- РЕЗЮМЕ -->
+<section id="resume">
+  <h2 class="sec-title">Резюме</h2>
+  <p class="sec-sub">Кто я и что умею</p>
+  <div class="resume">
+    <div class="resume-head">
+      <div class="avatar">AI</div>
+      <div>
+        <h3>ИМЯ ФАМИЛИЯ</h3>
+        <p>AI-дизайнер · графика для маркетплейсов</p>
+      </div>
+    </div>
+
+    <div class="resume-block">
+      <h4>Обо мне</h4>
+      <p>Дизайнер, специализируюсь на создании карточек товаров для Wildberries
+      и Ozon. Использую AI-инструменты (Midjourney, Stable Diffusion, Photoshop AI)
+      для ускорения работы и креативных решений. Делаю акцент на конверсии,
+      а не просто на «красивой картинке».</p>
+    </div>
+
+    <div class="resume-block">
+      <h4>Опыт</h4>
+      <ul>
+        <li><b>AI-дизайнер · фриланс</b><span>2023 — сейчас</span></li>
+        <li><b>Дизайн карточек WB / Ozon</b><span>100+ работ</span></li>
+        <li><b>Работа с рекламными центрами</b><span>2024 — сейчас</span></li>
+      </ul>
+    </div>
+
+    <div class="resume-block">
+      <h4>Навыки</h4>
+      <div class="skills">
+        <div class="skill">Photoshop</div>
+        <div class="skill">Figma</div>
+        <div class="skill">Midjourney</div>
+        <div class="skill">Stable Diffusion</div>
+        <div class="skill">Инфографика</div>
+        <div class="skill">Карточки WB</div>
+        <div class="skill">Карточки Ozon</div>
+        <div class="skill">AI-генерация</div>
+      </div>
+    </div>
+
+    <div class="resume-block">
+      <h4>Образование</h4>
+      <p>Самообразование + курсы по дизайну и AI-инструментам. Постоянная практика на реальных заказах.</p>
+    </div>
+  </div>
+</section>
+
+<!-- КОНТАКТ / РЕКЛАМНЫЙ ЦЕНТР -->
+<section id="contact">
+  <h2 class="sec-title">Рекламный <span style="color:var(--neon)">центр</span></h2>
+  <p class="sec-sub">Оставь заявку — отвечу в течение часа. Или напиши напрямую.</p>
+  <div class="contact">
+    <form onsubmit="sendForm(event)">
+      <input type="text" placeholder="Твоё имя" required>
+      <input type="tel" placeholder="Телефон или Telegram" required>
+      <textarea placeholder="Что нужно? (WB / Ozon / AI-генерация / другое)" required></textarea>
+      <button type="submit" class="btn btn-primary">Отправить заявку</button>
+      <p id="formMsg" style="color:var(--neon);font-size:.9rem;display:none">
+        ✅ Заявка отправлена! Скоро свяжусь.
+      </p>
+    </form>
+    <div class="contact-info">
+      <p>Пиши напрямую — так быстрее:</p>
+      <a href="https://t.me/твой_ник" target="_blank">Telegram: @твой_ник</a>
+      <a href="mailto:твой@email.com">Email: твой@email.com</a>
+      <a href="https://wa.me/твой_номер" target="_blank">WhatsApp</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  © 2025 · AI-Дизайн <span class="dot">●</span> Карточки для WB и Ozon <span class="dot">●</span> Сделано с 🔥
+</footer>
+
+<script>
+function sendForm(e){
+  e.preventDefault();
+  document.getElementById('formMsg').style.display='block';
+  e.target.reset();
+}
+</script>
+</body>
+</html>
